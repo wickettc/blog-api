@@ -1,6 +1,14 @@
 import express from 'express';
+import dotenv from 'dotenv';
+import mongoose from 'mongoose';
 
+dotenv.config();
 const app = express();
+
+const mongoDB = `mongodb+srv://admin:${process.env.MONGODB_PW}@cluster0.fefqf.mongodb.net/blog-api?retryWrites=true&w=majority`;
+mongoose.connect(mongoDB, { useNewUrlParser: true, useUnifiedTopology: true });
+const db = mongoose.connection;
+db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 
 app.get('/blog', (req, res) => {
     return res.send('send posts');
