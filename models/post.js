@@ -3,7 +3,8 @@ const { Schema } = mongoose;
 
 const postSchema = new Schema({
     title: { type: String, required: true },
-    author: { type: Schema.Types.ObjectId, required: true },
+    // author: { type: Schema.Types.ObjectId, required: true },
+    author: { type: String, required: true },
     message: { type: String, required: true },
     time: { type: String, required: true },
 });

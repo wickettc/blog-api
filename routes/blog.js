@@ -13,4 +13,7 @@ router.get('/posts', postController.get_all_posts);
 // GET single post
 router.get('/post/:id', postController.get_post);
 
+// PUT update post
+router.put('/post/:id', postController.update_post);
+
 module.exports = router;

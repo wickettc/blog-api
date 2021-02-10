@@ -19,3 +19,42 @@ exports.get_post = async (req, res, next) => {
         next(err);
     }
 };
+
+exports.create_post = async (req, res, next) => {
+    try {
+        const { title, description, author, date } = req.body;
+
+        const newPost = new Post({
+            title,
+            description,
+            author,
+            date,
+        });
+        const post = await newPost.save();
+        if (!post) {
+            return res
+                .status(404)
+                .json({ message: 'Post could not be created' });
+        }
+        res.status(200).json(post);
+    } catch (err) {
+        next(err);
+    }
+};
+
+exports.update_post = async (req, res, next) => {
+    try {
+        const { title, description, author, date } = req.body;
+
+        const post = await Post.findByIdAndUpdate(req.params.id, {
+            title,
+            description,
+            author,
+            date,
+        });
+        if (!post) return res.status(404).json({ message: 'Post not found' });
+        res.status(200).json(post);
+    } catch (err) {
+        next(err);
+    }
+};
