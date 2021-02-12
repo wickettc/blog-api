@@ -22,13 +22,13 @@ exports.get_post = async (req, res, next) => {
 
 exports.create_post = async (req, res, next) => {
     try {
-        const { title, description, author, date } = req.body;
+        const { title, author, message, time } = req.body;
 
         const newPost = new Post({
             title,
-            description,
             author,
-            date,
+            message,
+            time,
         });
         const post = await newPost.save();
         if (!post) {
@@ -44,16 +44,32 @@ exports.create_post = async (req, res, next) => {
 
 exports.update_post = async (req, res, next) => {
     try {
-        const { title, description, author, date } = req.body;
+        const { title, author, message, time } = req.body;
 
         const post = await Post.findByIdAndUpdate(req.params.id, {
             title,
-            description,
             author,
-            date,
+            message,
+            time,
         });
         if (!post) return res.status(404).json({ message: 'Post not found' });
         res.status(200).json(post);
+    } catch (err) {
+        next(err);
+    }
+};
+
+exports.delete_post = async (req, res, next) => {
+    try {
+        const post = await Post.findByIdAndRemove(
+            req.params.id,
+            (err, deletedPost) => {
+                if (err) return next(err);
+                return deletedPost;
+            }
+        );
+        if (!post) return res.status(404).json({ message: 'Post not found' });
+        res.status(200).json({ message: 'Post deleted successfully' });
     } catch (err) {
         next(err);
     }
