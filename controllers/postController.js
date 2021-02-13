@@ -10,6 +10,7 @@ exports.get_all_posts = async (req, res, next) => {
     }
 };
 
+// get single post
 exports.get_post = async (req, res, next) => {
     try {
         const post = await Post.findById(req.params.id);
@@ -46,12 +47,17 @@ exports.update_post = async (req, res, next) => {
     try {
         const { title, author, message, time } = req.body;
 
-        const post = await Post.findByIdAndUpdate(req.params.id, {
-            title,
-            author,
-            message,
-            time,
-        });
+        const post = await Post.findByIdAndUpdate(
+            req.params.id,
+            {
+                title,
+                author,
+                message,
+                time,
+            },
+            // set option to return the updated post
+            { new: true }
+        );
         if (!post) return res.status(404).json({ message: 'Post not found' });
         res.status(200).json(post);
     } catch (err) {
@@ -61,13 +67,7 @@ exports.update_post = async (req, res, next) => {
 
 exports.delete_post = async (req, res, next) => {
     try {
-        const post = await Post.findByIdAndRemove(
-            req.params.id,
-            (err, deletedPost) => {
-                if (err) return next(err);
-                return deletedPost;
-            }
-        );
+        const post = await Post.findByIdAndRemove(req.params.id);
         if (!post) return res.status(404).json({ message: 'Post not found' });
         res.status(200).json({ message: 'Post deleted successfully' });
     } catch (err) {
