@@ -1,10 +1,11 @@
 const Post = require('../models/post');
-const AppError = require('../error_handling/AppError');
+const AppError = require('../utils/AppError');
+const getCurrentTime = require('../utils/getCurrentTime');
 
 exports.get_all_posts = async (req, res, next) => {
     try {
         const posts = await Post.find({});
-        if (!posts) throw new AppError('No posts found', 404);
+        if (!posts.length) throw new AppError('No posts found', 404);
         res.status(200).json(posts);
     } catch (err) {
         next(err);
@@ -24,8 +25,8 @@ exports.get_post = async (req, res, next) => {
 
 exports.create_post = async (req, res, next) => {
     try {
-        const { title, author, message, time } = req.body;
-
+        const { title, author, message } = req.body;
+        const time = getCurrentTime();
         const newPost = new Post({
             title,
             author,
@@ -34,7 +35,7 @@ exports.create_post = async (req, res, next) => {
         });
         const post = await newPost.save();
         if (!post) throw new AppError('Post could not be created', 404);
-        res.status(200).json(post);
+        res.status(201).json(post);
     } catch (err) {
         next(err);
     }
@@ -42,8 +43,8 @@ exports.create_post = async (req, res, next) => {
 
 exports.update_post = async (req, res, next) => {
     try {
-        const { title, author, message, time } = req.body;
-
+        const { title, author, message } = req.body;
+        const time = getCurrentTime();
         const post = await Post.findByIdAndUpdate(
             req.params.id,
             {
@@ -55,7 +56,7 @@ exports.update_post = async (req, res, next) => {
             // set option to return the updated post
             { new: true }
         );
-        if (!post) throw new AppError('Post not found', 404);
+        if (!post) throw new AppError('Could not update post', 404);
         res.status(200).json(post);
     } catch (err) {
         next(err);
