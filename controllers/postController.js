@@ -1,9 +1,10 @@
 const Post = require('../models/post');
+const AppError = require('../error_handling/AppError');
 
 exports.get_all_posts = async (req, res, next) => {
     try {
         const posts = await Post.find({});
-        if (!posts) return res.status(404).json({ message: 'No posts found' });
+        if (!posts) throw new AppError('No posts found', 404);
         res.status(200).json(posts);
     } catch (err) {
         next(err);
@@ -14,7 +15,7 @@ exports.get_all_posts = async (req, res, next) => {
 exports.get_post = async (req, res, next) => {
     try {
         const post = await Post.findById(req.params.id);
-        if (!post) return res.status(404).json({ message: 'No post found' });
+        if (!post) throw new AppError('No post found', 404);
         res.status(200).json(post);
     } catch (err) {
         next(err);
@@ -32,11 +33,7 @@ exports.create_post = async (req, res, next) => {
             time,
         });
         const post = await newPost.save();
-        if (!post) {
-            return res
-                .status(404)
-                .json({ message: 'Post could not be created' });
-        }
+        if (!post) throw new AppError('Post could not be created', 404);
         res.status(200).json(post);
     } catch (err) {
         next(err);
@@ -58,7 +55,7 @@ exports.update_post = async (req, res, next) => {
             // set option to return the updated post
             { new: true }
         );
-        if (!post) return res.status(404).json({ message: 'Post not found' });
+        if (!post) throw new AppError('Post not found', 404);
         res.status(200).json(post);
     } catch (err) {
         next(err);
@@ -68,7 +65,7 @@ exports.update_post = async (req, res, next) => {
 exports.delete_post = async (req, res, next) => {
     try {
         const post = await Post.findByIdAndRemove(req.params.id);
-        if (!post) return res.status(404).json({ message: 'Post not found' });
+        if (!post) throw new AppError('Post not found', 404);
         res.status(200).json({ message: 'Post deleted successfully' });
     } catch (err) {
         next(err);
