@@ -1,4 +1,5 @@
 const Post = require('../models/post');
+const Comment = require('../models/comment');
 const AppError = require('../utils/AppError');
 const getCurrentTime = require('../utils/getCurrentTime');
 
@@ -16,8 +17,10 @@ exports.get_all_posts = async (req, res, next) => {
 exports.get_post = async (req, res, next) => {
     try {
         const post = await Post.findById(req.params.id);
+        // get all comments associated with this single post
+        const comments = await Comment.find({ postId: req.params.id });
         if (!post) throw new AppError('No post found', 404);
-        res.status(200).json(post);
+        res.status(200).json({ post, comments });
     } catch (err) {
         next(err);
     }

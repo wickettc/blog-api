@@ -3,10 +3,12 @@ const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const mongoose = require('mongoose');
+const passport = require('passport');
 require('dotenv').config();
 
+require('./passport/passport');
 const blogRouter = require('./routes/blog');
-// const usersRouter = require('./routes/users');
+const usersRouter = require('./routes/users');
 
 const app = express();
 
@@ -22,7 +24,11 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/blog', blogRouter);
-// app.use('/users', usersRouter);
+app.use(
+    '/users',
+    passport.authenticate('jwt', { session: false }),
+    usersRouter
+);
 
 // error handler
 app.use((err, req, res, next) => {

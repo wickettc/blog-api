@@ -1,4 +1,5 @@
 const express = require('express');
+const passport = require('passport');
 
 const router = express.Router();
 
@@ -18,7 +19,11 @@ router.get('/post/:id', postController.get_post);
 router.get('/comment/:id', commentController.get_comment);
 
 // POST create a new post
-router.post('/posts', postController.create_post);
+router.post(
+    '/posts',
+    passport.authenticate('jwt', { session: false }),
+    postController.create_post
+);
 
 // POST create a new comment
 router.post('/comments', commentController.create_comment);
