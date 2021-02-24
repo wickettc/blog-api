@@ -28,7 +28,8 @@ passport.use(
         },
 
         (jwtPayload, done) =>
-            User.findById(jwtPayload.id)
+            // eslint-disable-next-line no-underscore-dangle
+            User.findById(jwtPayload._id)
                 .then((user) => done(null, user))
                 .catch((err) => done(err))
     )
