@@ -8,7 +8,7 @@ require('dotenv').config();
 
 require('./passport/passport');
 const blogRouter = require('./routes/blog');
-const usersRouter = require('./routes/users');
+const authRouter = require('./routes/auth');
 
 const app = express();
 
@@ -23,12 +23,8 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/blog', blogRouter);
-app.use(
-    '/users',
-    passport.authenticate('jwt', { session: false }),
-    usersRouter
-);
+app.use('/blog', passport.authenticate('jwt', { session: false }), blogRouter);
+app.use('/auth', authRouter);
 
 // error handler
 app.use((err, req, res, next) => {

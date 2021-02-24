@@ -1,38 +1,35 @@
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
 const passportJWT = require('passport-jwt');
+require('dotenv').config();
+
+const User = require('../models/user');
 
 const JWTStrategy = passportJWT.Strategy;
 const ExtractJWT = passportJWT.ExtractJwt;
-const User = require('../models/user');
 
 passport.use(
-    new LocalStrategy((username, password, cb) =>
-        User.findOne({ username, password })
-            .then((user) => {
-                if (!user) {
-                    return cb(null, false, {
-                        message: 'Incorrect username or password.',
-                    });
-                }
-
-                return cb(null, user, {
-                    message: 'Logged In Successfully',
-                });
-            })
-            .catch((err) => cb(err))
-    )
+    new LocalStrategy((username, password, done) => {
+        User.findOne({ username }, (err, user) => {
+            if (err) return done(err);
+            if (!user) return done(null, false);
+            // need to check if password is correct here
+            // if (!user.verifyPassword(password)) return done(null, false)
+            return done(null, user);
+        });
+    })
 );
 
 passport.use(
     new JWTStrategy(
         {
             jwtFromRequest: ExtractJWT.fromAuthHeaderAsBearerToken(),
-            secretOrKey: process.env.JWT_SECRET,
+            secretOrKey: process.env.SECRET,
         },
-        (jwtPayload, cb) =>
-            User.findOneById(jwtPayload.id)
-                .then((user) => cb(null, user))
-                .catch((err) => cb(err))
+
+        (jwtPayload, done) =>
+            User.findById(jwtPayload.id)
+                .then((user) => done(null, user))
+                .catch((err) => done(err))
     )
 );
