@@ -1,1 +1,3 @@
-Creating a RESTful blog API with Node, Express and JSON Web Tokens
+Creating a RESTful blog API with Express, MongoDB and JSON Web Tokens
+
+---
