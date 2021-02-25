@@ -1,6 +1,7 @@
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
 const passportJWT = require('passport-jwt');
+const bcrypt = require('bcryptjs');
 require('dotenv').config();
 
 const User = require('../models/user');
@@ -12,10 +13,16 @@ passport.use(
     new LocalStrategy((username, password, done) => {
         User.findOne({ username }, (err, user) => {
             if (err) return done(err);
-            if (!user) return done(null, false);
+            if (!user) return done(null, false, {msg: 'Incorrect Email'});
             // need to check if password is correct here
-            // if (!user.verifyPassword(password)) return done(null, false)
-            return done(null, user);
+            bcrypt.compare(password, user.password, (error, res) => {
+                if (res) {
+                    // passwords match
+                    return done(null, user)
+                }
+                // passwords do not match
+                return done(null, false, {msg: 'Incorrect Password'})
+            })
         });
     })
 );
