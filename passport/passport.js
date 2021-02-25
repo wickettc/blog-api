@@ -27,10 +27,11 @@ passport.use(
             secretOrKey: process.env.SECRET,
         },
 
-        (jwtPayload, done) =>
-            // eslint-disable-next-line no-underscore-dangle
-            User.findById(jwtPayload._id)
-                .then((user) => done(null, user))
-                .catch((err) => done(err))
+        async (token, done) =>{
+            try {
+                return done(null, token.user)
+            } catch (err) {
+                done(err)
+            }}
     )
 );

@@ -29,15 +29,15 @@ router.post(
 router.post('/comments', commentController.create_comment);
 
 // PUT update post
-router.put('/post/:id', postController.update_post);
+router.put('/post/:id', passport.authenticate('jwt', { session: false }), postController.update_post);
 
 // PUT update comment
-router.put('/comment/:id', commentController.update_comment);
+router.put('/comment/:id', passport.authenticate('jwt', { session: false }), commentController.update_comment);
 
 // DELETE single post
-router.delete('/post/:id', postController.delete_post);
+router.delete('/post/:id', passport.authenticate('jwt', { session: false }), postController.delete_post);
 
 // DELETE single comment
-router.delete('/comment/:id', commentController.delete_comment);
+router.delete('/comment/:id', passport.authenticate('jwt', { session: false }), commentController.delete_comment);
 
 module.exports = router;
