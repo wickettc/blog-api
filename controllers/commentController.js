@@ -24,9 +24,10 @@ exports.get_comment = async (req, res, next) => {
 
 exports.create_comment = async (req, res, next) => {
     try {
-        const { commentbody, postId } = req.body;
+        const { author, commentbody, postId } = req.body;
         const time = getCurrentTime();
         const newComment = new Comment({
+            author,
             commentbody,
             time,
             postId,
