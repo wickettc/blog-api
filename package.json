@@ -6,9 +6,10 @@
         "node": "14.15.4"
     },
     "scripts": {
-        "start": "nodemon ./bin/www",
-        "dev": "DEBUG=myapp:* npm start",
-        "winstart": "SET DEBUG=blog-api:* & npm start"
+        "start": "node ./bin/www",
+        "nodemon-start": "node ./bin/www",
+        "dev": "DEBUG=myapp:* npm nodemon-start",
+        "winstart": "SET DEBUG=blog-api:* & npm nodemon-start"
     },
     "dependencies": {
         "bcryptjs": "^2.4.3",
